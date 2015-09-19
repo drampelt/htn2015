@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>webRTC</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+	<section class="experiment recordrtc">
+    <h2 class="header">
+        <select class="recording-media">
+            <option value="record-video">Video</option>
+            <option value="record-audio">Audio</option>
+            <option value="record-screen">Screen</option>
+        </select>
+        into
+        <select class="media-container-format">
+            <option>WebM</option>
+            <option disabled>Mp4</option>
+            <option disabled>WAV</option>
+            <option disabled>Ogg</option>
+            <option disabled>Gif</option>
+        </select>
+        
+        <button>Start Recording</button>
+    </h2>
+            
+    <div style="text-align: center; display: none;">
+        <button id="save-to-disk">Save To Disk</button>
+        <button id="open-new-tab">Open New Tab</button>
+    </div>
+    <br>
+
+    <video controls muted></video>
+</section>
+
+
+<!-- <script src="./node_modules/recordrtc/RecordRTC.js"></script>	 -->
+<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+<!-- <script src="https://cdn.webrtc-experiment.com/gif-recorder.js"></script> -->
+<script src="https://cdn.webrtc-experiment.com/getScreenId.js"></script>
+<script>
+    (function() {
+    var params = {},
+        r = /([^&=]+)=?([^&]*)/g;
+
+    function d(s) {
+        return decodeURIComponent(s.replace(/\+/g, ' '));
+    }
+
+    var match, search = window.location.search;
+    while (match = r.exec(search.substring(1))) {
+        params[d(match[1])] = d(match[2]);
+
+        if(d(match[2]) === 'true' || d(match[2]) === 'false') {
+            params[d(match[1])] = d(match[2]) === 'true' ? true : false;
+        }
+    }
+
+    window.params = params;
+    console.log(params)
+})();
+</script>	
+
+</body>
