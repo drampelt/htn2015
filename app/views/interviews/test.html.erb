@@ -1,40 +1,10 @@
 <div class="container-fluid">
-
     <div class="row">
-<<<<<<< HEAD
         <div id="camera" class="col-md-4">
             <h1>Camera</h1>
-            <div id="videos-container">
-              <div id="step1">
-                <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
-                <div id="step1-error">
-                  <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser.</p>
-                  <a href="#" class="pure-button pure-button-error" id="step1-retry">Try again</a>
-                </div>
-              </div>
-      
-              <!-- Make calls to others -->
-              <% unless current_user %>
-              <div id="step2">
-                <button id="make-call" disabled>Start Video Call</button>
-              </div>
-              <% end %>
-      
-              <!-- Call in progress -->
-              <div id="step3">
-                <p>Call in Progress</p>
-                <p><button id="end-call">End Call</button></p>
-              </div>
-              
-              <video id="their-video" autoplay></video>
-              <video id="my-video" muted="true" autoplay></video>
-=======
-        <div id="camera" class="col-md-6">
-          <div>
-            <h2>Camera</h2>
             <button id="setup-new-room">Setup New Conference</button>
             <div id="videos-container">
->>>>>>> 27739a72068c8fb76399a809330366f74f7c04db
+              
             </div> <!--end videos-->
             
             <div id="audios-container">
@@ -77,12 +47,26 @@
                 </div>
               </div>
             </div> <!--end audios-->
-          </div>
-          
-          <hr>
-          
-          <div>
-            <h2>Info</h2>
+        </div>
+        <div class="col-md-4">
+            <h1>Text editor</h1>
+            <!-- Single button -->
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span id="current_language">Current language: javascript</span ><span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#" onClick="setAceMode('java')">java</a></li>
+                <li><a href="#" onClick="setAceMode('c')">c/c++</a></li>
+                <li><a href="#" onClick="setAceMode('python')">python</a></li>
+                <li><a href="#" onClick="setAceMode('ruby')">ruby</a></li>
+                <li><a href="#" onClick="setAceMode('javascript')">javascript</a></li>
+              </ul>
+            </div>
+            <div id="firepad-container"></div>
+        </div>
+        <div id="info-column" class="col-md-4">
+            <h1>Info</h1>
             <h4>Interview progress:</h4>
             <div class="progress">
               <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
@@ -90,94 +74,36 @@
               </div>
             </div>
             
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#resume_modal">View Resume</button>
+
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
             
-            <button type="button" class=" btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
-            <button type="button" class=" btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
-            <button type="button" class=" btn btn-primary btn-danger">Conclude interview</button>
-          </div>
-        </div>
+            <button type="button" class=" btn btn-primary btn-default" data-toggle="modal" data-target="#question_modal">Add question</button>
+            <button type="button" class=" btn btn-primary btn-success">Conclude interview</button>
         
-        <div class="col-md-6">
-          <!--<div>-->
-            <ul class="nav nav-pills" id="myNav">
-              <li class="active"><a href="#text-editor">Text Editor</a></li>
-              <li><a href="#report">Report</a></li>
-              <li><a href="#resume">Resume</a></li>
-            </ul>
-          <!--</div>-->
-          
-            <div id='content' class="tab-content">
-              <div class="tab-pane active" id="text-editor">
-                <h3 style="text-align: center">Text editor</h3>
-                <!-- Single button -->
-                <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span id="current_language">javascript</span ><span class="caret"></span>
-                  </button>
-                  
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="#" onClick="setAceMode('java')">java</a></li>
-                    <li><a href="#" onClick="setAceMode('c')">c/c++</a></li>
-                    <li><a href="#" onClick="setAceMode('python')">python</a></li>
-                    <li><a href="#" onClick="setAceMode('ruby')">ruby</a></li>
-                    <li><a href="#" onClick="setAceMode('javascript')">javascript</a></li>
-                  </ul>
-                </div>
-                <div id="firepad-container"></div>
-              </div><!--end "text-editor" -->
-              
-              <div class="tab-pane" id="report">
-                <h3 style="text-align: center">Report</h3>
-                <p>Questions answered correctly: (7/8)</p>
-                <p>Overall sentiment:</p>
-                <p>Keywords:</p>
-                <p>Notes:</p>
-                
-                <!-- New note dialog -->
-                <div class="modal fade" id="note_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">New note</h4>
-                      </div>
-                      <div class="modal-body">
-                        <input id="new_note_text" type="text" class="form-control" placeholder="Type note here.">
-                      </div>
-                      <div class="modal-footer">
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                        <button id="submit_note" type="button" class="btn btn-primary" data-dismiss="modal">Save note</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Question dialog -->
-                <div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <input id="new_question_text" type="text" class="form-control" placeholder="Type question here.">
-                      </div>
-                      <div class="modal-body">
-                        <input id="new_question_answer" type="text" class="form-control" placeholder="Type expected answer here.">
-                      </div>
-                      <div class="modal-footer">
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                        <button id="submit_question" type="button" class="btn btn-primary" data-dismiss="modal">Submit question</button>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- Question dialog -->
 
-              </div><!--end "info" -->
-            </div><!--end "tab-content" -->
-        </div><!--end "col-6" -->
-        
-    </div><!--end "row" -->
+            <!-- Question dialog -->
+            <div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <input id="new_question_text" type="text" class="form-control" placeholder="Type question here.">
+                  </div>
+                  <div class="modal-body">
+                    <input id="new_question_answer" type="text" class="form-control" placeholder="Type expected answer here.">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="submit_question" type="button" class="btn btn-primary" data-dismiss="modal">Submit question</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+        </div>
+    </div>
 </div>
 <script>
 var langs =
@@ -252,107 +178,14 @@ var langs =
     //// Create ACE
     var editor = ace.edit("firepad-container");
     editor.setTheme("ace/theme/textmate");
-    window.editor = editor;
     var session = editor.getSession();
     session.setUseWrapMode(true);
     session.setUseWorker(false);
     session.setMode("ace/mode/javascript");
-    
     //// Create Firepad.
     var firepad = Firepad.fromACE(firepadRef, editor, {
-      defaultText: '// JavaScript Editing with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
+      defaultText: '// JavaScript <Editi></Editi>ng with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
     });
-    
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    
-    <% if current_user %>
-    //// Interviewer
-    
-    var peer = new Peer(id, {key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
-    
-    peer.on('connection', function(conn) {
-      // TODO: check if someone is already connected
-      window.conn = conn;
-      conn.on('data', function(data) {
-        console.log('got ' + data);
-      });
-    });
-    // Receiving a call
-    peer.on('call', function(call){
-      // Answer the call automatically (instead of prompting user) for demo purposes
-      call.answer(window.localStream);
-      step3(call);
-    });
-    
-    peer.on('error', function(err){
-      alert(err.message);
-      // Return to step 2 if error occurs
-      step2();
-    });
-    
-    <% else %>
-    //// Interviewee
-    
-    var peer = new Peer({key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
-    peer.on('open', function(){
-      $('#make-call').removeAttr('disabled');
-      
-      var conn = peer.connect(id);
-      window.conn = conn;
-      conn.on('data', function(data) {
-        console.log("received: " + data);
-      });
-    });
-    
-    $('#make-call').click(function(){
-      // Initiate a call!
-      var call = peer.call(id, window.localStream);
-      step3(call);
-    });
-    
-    <% end %>
-    
-    $('#end-call').click(function(){
-      window.existingCall.close();
-      step2();
-    });
-    // Retry if getUserMedia fails
-    $('#step1-retry').click(function(){
-      $('#step1-error').hide();
-      step1();
-    });
-    
-    step1();
-    
-    function step1 () {
-      // Get audio/video stream
-      navigator.getUserMedia({audio: true, video: true}, function(stream){
-        // Set your video displays
-        $('#my-video').prop('src', URL.createObjectURL(stream));
-        window.localStream = stream;
-        step2();
-      }, function(){ $('#step1-error').show(); });
-    }
-    function step2 () {
-      $('#step1, #step3').hide();
-      $('#step2').show();
-    }
-    function step3 (call) {
-      // Hang up on an existing call if present
-      if (window.existingCall) {
-        window.existingCall.close();
-      }
-      // Wait for stream on the call, then set peer video display
-      call.on('stream', function(stream){
-        $('#their-video').prop('src', URL.createObjectURL(stream));
-      });
-      // UI stuff
-      window.existingCall = call;
-      $('#their-id').text(call.peer);
-      call.on('close', step2);
-      $('#step1, #step2').hide();
-      $('#step3').show();
-    }
   }
   
   function setProgressBar(value){
@@ -366,7 +199,7 @@ var langs =
   function setAceMode(language){
           var editor = ace.edit("firepad-container"); 
           var session = editor.getSession();
-          document.getElementById("current_language").innerHTML = language;
+          document.getElementById("current_language").innerHTML = "Current language: " + language;
           session.setMode("ace/mode/" + language); 
       }
   
@@ -398,13 +231,6 @@ var langs =
   $(document).ready(function(){
     init();
     
-    // navbar change two-column view
-    $('#myNav a').click(function (e) {
-      e.preventDefault()
-      $(this).tab('show')
-    })
-
-
     for (var i = 0; i < langs.length; i++) {
       select_language.options[i] = new Option(langs[i][0], i);
     }
