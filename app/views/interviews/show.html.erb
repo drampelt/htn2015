@@ -225,7 +225,6 @@ var langs =
       conn.send('hi!');
     });
     
-    video
     navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
       console.log(window.stream = stream);
       var call = peer.call(id, stream);
