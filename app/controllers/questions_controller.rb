@@ -26,6 +26,9 @@ class QuestionsController < ApplicationController
   # POST /questions.json
   def create
     @question = Question.new(question_params)
+    @interview = Interview.find_by_link params[:link]
+    @question.interview = @interview
+
 
     respond_to do |format|
       if @question.save
@@ -70,6 +73,10 @@ class QuestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def question_params
+<<<<<<< HEAD
       params.permit(:content, :interview_id, :answer)
+=======
+      params.require(:question).permit(:content, :answer)
+>>>>>>> 2aa94f8a9e117ec56f1f620df89178efab4f71e7
     end
 end
