@@ -7,7 +7,12 @@
 
 <p>
   <strong>Interview:</strong>
-  <%= @question.interview %>
+  <%= @question.interview_id %>
+</p>
+
+<p>
+  <strong>Answer:</strong>
+  <%= @question.answer %>
 </p>
 
 <%= link_to 'Edit', edit_question_path(@question) %> |
