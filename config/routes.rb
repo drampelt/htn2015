@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :interviews, only: [:index, :create, :new, :destroy]
+  get 'interviews/:link', to: 'interviews#show', as: :interview_show
   root 'home#home'
 
   devise_for :users
