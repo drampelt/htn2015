@@ -2,11 +2,30 @@
     <div class="row">
         <div id="camera" class="col-md-4">
             <h1>Camera</h1>
-            <button id="setup-new-room">Setup New Conference</button>
             <div id="videos-container">
-              <video id="other-video" autoplay></video>
-              <video id="self-video"></video>
+              <div id="step1">
+                <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
+                <div id="step1-error">
+                  <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser.</p>
+                  <a href="#" class="pure-button pure-button-error" id="step1-retry">Try again</a>
+                </div>
+              </div>
+      
+              <!-- Make calls to others -->
+              <% unless current_user %>
+              <div id="step2">
+                <button id="make-call" disabled>Start Video Call</button>
+              </div>
+              <% end %>
+      
+              <!-- Call in progress -->
+              <div id="step3">
+                <p>Call in Progress</p>
+                <p><button id="end-call">End Call</button></p>
+              </div>
               
+              <video id="their-video" autoplay></video>
+              <video id="my-video" muted="true" autoplay></video>
             </div> <!--end videos-->
             
             <div id="audios-container">
@@ -184,60 +203,107 @@ var langs =
     //// Create ACE
     var editor = ace.edit("firepad-container");
     editor.setTheme("ace/theme/textmate");
+    window.editor = editor;
     var session = editor.getSession();
     session.setUseWrapMode(true);
     session.setUseWorker(false);
     session.setMode("ace/mode/javascript");
+    
     //// Create Firepad.
     var firepad = Firepad.fromACE(firepadRef, editor, {
       defaultText: '// JavaScript <Editi></Editi>ng with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
     });
     
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    
     <% if current_user %>
-    // Interviewer
-    var peer = new Peer(id, {key: 'ii9fpmjptb5ljtt9'});
-    console.log('hosting as ' + id);
+    //// Interviewer
+    
+    var peer = new Peer(id, {key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
+    
     peer.on('connection', function(conn) {
-      conn.on('data', function(data){
-        // Will print 'hi!'
-        console.log(data);
+      // TODO: check if someone is already connected
+      window.conn = conn;
+      conn.on('data', function(data) {
+        console.log('got ' + data);
       });
     });
+    // Receiving a call
+    peer.on('call', function(call){
+      // Answer the call automatically (instead of prompting user) for demo purposes
+      call.answer(window.localStream);
+      step3(call);
+    });
     
-    peer.on('call', function(call) {
-      navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
-        call.answer(stream); // Answer the call with an A/V stream.
-        call.on('stream', function(remoteStream) {
-          console.log('answered stream!');
-          window.rs = remoteStream;
-          $('#other-video').prop('src', URL.createObjectURL(stream));
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
+    peer.on('error', function(err){
+      alert(err.message);
+      // Return to step 2 if error occurs
+      step2();
     });
     
     <% else %>
-    var peer = new Peer({key: 'ii9fpmjptb5ljtt9'});
-    var conn = peer.connect(id);
-    console.log('connecting to ' + id);
-    conn.on('open', function(){
-      conn.send('hi!');
+    //// Interviewee
+    
+    var peer = new Peer({key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
+    peer.on('open', function(){
+      $('#make-call').removeAttr('disabled');
+      
+      var conn = peer.connect(id);
+      window.conn = conn;
+      conn.on('data', function(data) {
+        console.log("received: " + data);
+      });
     });
     
-    navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
-      console.log(window.stream = stream);
-      var call = peer.call(id, stream);
-      call.on('stream', function(remoteStream) {
-        // Show stream in some video/canvas element.
-        console.log('we have a stream!!');
-        window.rs = remoteStream;
-        $('#other-video').prop('src', URL.createObjectURL(stream));
-      });
-    }, function(err) {
-      console.log('Failed to get local stream' ,err);
+    $('#make-call').click(function(){
+      // Initiate a call!
+      var call = peer.call(id, window.localStream);
+      step3(call);
     });
+    
     <% end %>
+    
+    $('#end-call').click(function(){
+      window.existingCall.close();
+      step2();
+    });
+    // Retry if getUserMedia fails
+    $('#step1-retry').click(function(){
+      $('#step1-error').hide();
+      step1();
+    });
+    
+    step1();
+    
+    function step1 () {
+      // Get audio/video stream
+      navigator.getUserMedia({audio: true, video: true}, function(stream){
+        // Set your video displays
+        $('#my-video').prop('src', URL.createObjectURL(stream));
+        window.localStream = stream;
+        step2();
+      }, function(){ $('#step1-error').show(); });
+    }
+    function step2 () {
+      $('#step1, #step3').hide();
+      $('#step2').show();
+    }
+    function step3 (call) {
+      // Hang up on an existing call if present
+      if (window.existingCall) {
+        window.existingCall.close();
+      }
+      // Wait for stream on the call, then set peer video display
+      call.on('stream', function(stream){
+        $('#their-video').prop('src', URL.createObjectURL(stream));
+      });
+      // UI stuff
+      window.existingCall = call;
+      $('#their-id').text(call.peer);
+      call.on('close', step2);
+      $('#step1, #step2').hide();
+      $('#step3').show();
+    }
   }
   
   function setProgressBar(value){
