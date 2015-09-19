@@ -64,7 +64,7 @@
                 <!-- Single button -->
                 <div class="dropdown">
                   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span id="current_language">Current language: javascript</span ><span class="caret"></span>
+                    <span id="current_language">javascript</span ><span class="caret"></span>
                   </button>
                   
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -88,8 +88,6 @@
                   </div>
                 </div>
                 
-                <!--<button type="button" class="btn btn-default" data-toggle="modal" data-target="#resume_modal">View Resume</button>-->
-    
                 <h4>Current question: </h4>
                 <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
                 
@@ -228,7 +226,7 @@ var langs =
     session.setMode("ace/mode/javascript");
     //// Create Firepad.
     var firepad = Firepad.fromACE(firepadRef, editor, {
-      defaultText: '// JavaScript <Editi></Editi>ng with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
+      defaultText: '// JavaScript Editing with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
     });
   }
   
@@ -243,7 +241,7 @@ var langs =
   function setAceMode(language){
           var editor = ace.edit("firepad-container"); 
           var session = editor.getSession();
-          document.getElementById("current_language").innerHTML = "Current language: " + language;
+          document.getElementById("current_language").innerHTML = language;
           session.setMode("ace/mode/" + language); 
       }
   
