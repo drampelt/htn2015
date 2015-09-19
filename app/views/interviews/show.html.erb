@@ -4,6 +4,8 @@
             <h1>Camera</h1>
             <button id="setup-new-room">Setup New Conference</button>
             <div id="videos-container">
+              <video id="other-video" autoplay></video>
+              <video id="self-video"></video>
               
             </div> <!--end videos-->
             
@@ -159,8 +161,9 @@ var langs =
 
 <script>
   function init() {
+    var id = location.pathname.substr(12);
     //// Initialize Firebase.
-    var firepadRef = new Firebase('https://htn2015.firebaseio.com/' + location.pathname.substr(12));
+    var firepadRef = new Firebase('https://htn2015.firebaseio.com/' + id);
     //// Create ACE
     var editor = ace.edit("firepad-container");
     editor.setTheme("ace/theme/textmate");
@@ -172,6 +175,53 @@ var langs =
     var firepad = Firepad.fromACE(firepadRef, editor, {
       defaultText: '// JavaScript <Editi></Editi>ng with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
     });
+    
+    <% if current_user %>
+    // Interviewer
+    var peer = new Peer(id, {key: 'ii9fpmjptb5ljtt9'});
+    console.log('hosting as ' + id);
+    peer.on('connection', function(conn) {
+      conn.on('data', function(data){
+        // Will print 'hi!'
+        console.log(data);
+      });
+    });
+    
+    peer.on('call', function(call) {
+      navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
+        call.answer(stream); // Answer the call with an A/V stream.
+        call.on('stream', function(remoteStream) {
+          console.log('answered stream!');
+          window.rs = remoteStream;
+          $('#other-video').prop('src', URL.createObjectURL(stream));
+        });
+      }, function(err) {
+        console.log('Failed to get local stream' ,err);
+      });
+    });
+    
+    <% else %>
+    var peer = new Peer({key: 'ii9fpmjptb5ljtt9'});
+    var conn = peer.connect(id);
+    console.log('connecting to ' + id);
+    conn.on('open', function(){
+      conn.send('hi!');
+    });
+    
+    video
+    navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
+      console.log(window.stream = stream);
+      var call = peer.call(id, stream);
+      call.on('stream', function(remoteStream) {
+        // Show stream in some video/canvas element.
+        console.log('we have a stream!!');
+        window.rs = remoteStream;
+        $('#other-video').prop('src', URL.createObjectURL(stream));
+      });
+    }, function(err) {
+      console.log('Failed to get local stream' ,err);
+    });
+    <% end %>
   }
   
   function setProgressBar(value){
