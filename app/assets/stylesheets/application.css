@@ -137,3 +137,16 @@ border: 0;
 background-color:transparent;
 padding: 0;
 } 
+
+#videos-container {
+    position: relative;
+    min-height: 400px;
+}
+
+#videos-container #my-video {
+    position: absolute;
+    width: 100px;
+    border: 2px solid white;
+    bottom: 20px;
+    right: 50px;
+}
