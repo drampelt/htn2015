@@ -3,7 +3,9 @@
 one:
   context: MyText
   question_id: 
+  positivity: 1.5
 
 two:
   context: MyText
   question_id: 
+  positivity: 1.5

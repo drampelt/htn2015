@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :responses
   resources :questions
   resources :interviews, only: [:index, :create, :new, :destroy]
   get 'interviews/:link', to: 'interviews#show', as: :interview_show
