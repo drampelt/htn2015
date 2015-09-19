@@ -1,9 +1,9 @@
 <div class="container-fluid">
 
     <div class="row">
-<<<<<<< HEAD
-        <div id="camera" class="col-md-4">
-            <h1>Camera</h1>
+        <div id="camera" class="col-md-6">
+          <div>
+            <h2>Camera</h2>
             <div id="videos-container">
               <div id="step1">
                 <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
@@ -28,13 +28,6 @@
               
               <video id="their-video" autoplay></video>
               <video id="my-video" muted="true" autoplay></video>
-=======
-        <div id="camera" class="col-md-6">
-          <div>
-            <h2>Camera</h2>
-            <button id="setup-new-room">Setup New Conference</button>
-            <div id="videos-container">
->>>>>>> 27739a72068c8fb76399a809330366f74f7c04db
             </div> <!--end videos-->
             
             <div id="audios-container">
@@ -247,8 +240,9 @@ var langs =
 
 <script>
   function init() {
+    var id = location.pathname.substr(12);
     //// Initialize Firebase.
-    var firepadRef = new Firebase('https://htn2015.firebaseio.com/' + location.pathname.substr(12));
+    var firepadRef = new Firebase('https://htn2015.firebaseio.com/' + id);
     //// Create ACE
     var editor = ace.edit("firepad-container");
     editor.setTheme("ace/theme/textmate");
