@@ -29,7 +29,8 @@
               
               <div class="right">
                 <button id="start_button">
-                  <img id="start_img" src="/images/mic.gif" alt="Start"></button>
+                  <img id="start_img" src="/app/assets/images/mic.gif" alt="Start">
+                </button>
               </div>
 
               <div id="results">
@@ -64,7 +65,7 @@
             </div>
             <div id="firepad-container"></div>
         </div>
-        <div id="info" class="col-md-4">
+        <div id="info-column" class="col-md-4">
             <h1>Info</h1>
             Progress:
             <div class="progress">
@@ -177,6 +178,7 @@ var langs =
 
   $(document).ready(function(){
     init();
+    
     for (var i = 0; i < langs.length; i++) {
       select_language.options[i] = new Option(langs[i][0], i);
     }
@@ -319,7 +321,7 @@ function showButtons(style) {
     return;
   }
   current_style = style;
-  
+}
 }); //end
-    
+
  </script>
