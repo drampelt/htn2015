@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150919094903) do
+ActiveRecord::Schema.define(version: 20150919191302) do
 
   create_table "interviews", force: :cascade do |t|
     t.string   "name"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20150919094903) do
   create_table "responses", force: :cascade do |t|
     t.text     "context"
     t.integer  "question_id"
+    t.float    "positivity"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end

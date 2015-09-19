@@ -3,6 +3,7 @@ class CreateResponses < ActiveRecord::Migration
     create_table :responses do |t|
       t.text :context
       t.references :question, index: true, foreign_key: true
+      t.float :positivity
 
       t.timestamps null: false
     end
