@@ -80,6 +80,9 @@
               Ask question
             </button>
             
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#resume_modal">View Resume</button>
+            
+            
             <!-- Question dialog -->
             <div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
@@ -205,14 +208,15 @@ var langs =
   }
   
   $("#submit_question").click(function(){
-    $.post("/questions.json",{
+    $.post("/questions.json",
+    {
       content:$("#new_question_text").val(),
       answer:$("#new_question_answer").val()
     },
     function(){
       $("#current_question").html($("#new_question_text").val());
-      $("#new_question_text").empty();
-      $("#new_question_answer").empty();
+      $("#new_question_text").val("");
+      $("#new_question_answer").val("");
     });
   });
   
