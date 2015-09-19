@@ -1,18 +1,64 @@
-<p id="notice"><%= notice %></p>
+<div class="container-fluid">
+    <div class="row">
+        <div id="camera" class="col-md-4">
+            <h1>Camera</h1>
+            <button id="setup-new-room">Setup New Conference</button>
+            <div id="videos-container"></div>
+        </div>
+        <div class="col-md-4">
+            <h1>Text editor</h1>
+            <!-- Single button -->
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span id="current_language">Current language: javascript</span ><span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#" onClick="setAceMode('java',this)">java</a></li>
+                <li><a href="#" onClick="setAceMode('c',this)">c/c++</a></li>
+                <li><a href="#" onClick="setAceMode('python',this)">python</a></li>
+                <li><a href="#" onClick="setAceMode('ruby',this)">ruby</a></li>
+                <li><a href="#" onClick="setAceMode('javascript',this)">javascript</a></li>
+              </ul>
+            </div>
+            <div id="firepad-container"></div>
+        </div>
+        <div id="info" class="col-md-4">
+            <h1>Info</h1>
+            Progress:
+            <div class="progress">
+              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                <span class="sr-only">40% Complete (success)</span>
+              </div>
+            </div>
+            Current question:
+            <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
+        </div>
+    </div>
+</div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @interview.name %>
-</p>
+<script>
+    function init() {
+      //// Initialize Firebase.
+      var firepadRef = new Firebase('https://htn2015.firebaseio.com/' + location.pathname.substr(12));
+      //// Create ACE
+      var editor = ace.edit("firepad-container");
+      editor.setTheme("ace/theme/textmate");
+      var session = editor.getSession();
+      session.setUseWrapMode(true);
+      session.setUseWorker(false);
+      session.setMode("ace/mode/javascript");
+      //// Create Firepad.
+      var firepad = Firepad.fromACE(firepadRef, editor, {
+        defaultText: '// JavaScript <Editi></Editi>ng with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
+      });
+    }
+    
+    function setAceMode(language,source){
+        var editor = ace.edit("firepad-container"); 
+        var session = editor.getSession();
+        document.getElementById("current_language").innerHTML = "Current language: " + language;
+        session.setMode("ace/mode/" + language); 
+    }
 
-<p>
-  <strong>Link:</strong>
-  <%= @interview.link %>
-</p>
-
-<p>
-  <strong>User:</strong>
-  <%= @interview.user %>
-</p>
-
-<%= link_to 'Back', interviews_path %>
+    window.onload = init;
+ </script>
