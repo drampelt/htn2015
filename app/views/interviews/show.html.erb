@@ -48,17 +48,14 @@
                 <span class="sr-only">40% Complete (success)</span>
               </div>
             </div>
-<<<<<<< HEAD
 
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
 
-=======
             <% unless current_user %>
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
             <% else %>
->>>>>>> e401e98da9ef0bd701c0ffbd960490db1dd31a8f
             <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
             <button type="button" class="btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
             <button type="button" class="btn btn-primary btn-danger">Conclude interview</button>
@@ -108,6 +105,9 @@
                 <p>Overall sentiment:</p>
                 <p>Keywords:</p>
                 <p>Notes:</p>
+                <ul id="report_notes">
+                  
+                </ul>
 
               </div><!--end "info" -->
             </div><!--end "tab-content" -->
@@ -363,6 +363,11 @@
       $("#new_question_text").val("");
       $("#new_question_answer").val("");
     });
+  });
+  
+  $("#submit_note").click(function(){
+    $("#report_notes").append("<li>" + $("#new_note_text").val() + "</li>");
+    $("#new_note_text").val("");
   });
 
   var final_transcript = '';
