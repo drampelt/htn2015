@@ -22,4 +22,6 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adapter: postgres
+  database: talentscale
+  url: <%= ENV['DATABASE_URL'] %>
