@@ -423,6 +423,7 @@
   });
   
   function selectQuestion(index) {
+    if($('.question').eq(index).hasClass('completed', 'selected')) { return }
     $('.question').removeClass('selected');
     $('.question').eq(index).addClass('selected');
     conn.send({question: questions[index]});
