@@ -67,19 +67,6 @@
             <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
             <button type="button" class="btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
             <button type="button" class="btn btn-primary btn-danger">Conclude interview</button>
-            
-            <h2>All Questions <small>click to ask</small></h2>
-            <ul id="questions">
-              <% @interview.questions.each do |question| %>
-                <li class="question<%= ' completed' if question.response %>" data-id="<%= question.id %>">
-                  <h4><%= question.content %></h4>
-                  <% if question.response %>
-                  <div class="response"><b>Response: </b><%= question.response.content %></div>
-                  <div class="other"><b>Positivity: </b><%= (question.response.positivity * 100).round %>%, <b>Correctness: </b><%= (question.response.correctness * 100).round %>%, <b>Keywords: </b><%= question.response.keywords %>, <b>Topics: </b><%= question.response.tags %></div>
-                  <% end %>
-                </li>
-              <% end %>
-            </ul>
             <% end %>
           </div>
         </div>
@@ -88,7 +75,10 @@
           <!--<div>-->
             <ul class="nav nav-pills" id="myNav">
               <li class="active"><a href="#text-editor">Text Editor</a></li>
+              <% if current_user %>
+              <li><a href="#questions">Questions</a></li>
               <li><a href="#report">Report</a></li>
+              <% end %>
               <li><a href="#resume">Resume</a></li>
             </ul>
           <!--</div>-->
@@ -112,6 +102,21 @@
                 </div>
                 <div id="firepad-container"></div>
               </div><!--end "text-editor" -->
+              
+              <div class="tab-pane" id="questions">
+                <h3>All Questions <small>click to ask</small></h3>
+                <ul id="questions">
+                  <% @interview.questions.each do |question| %>
+                    <li class="question<%= ' completed' if question.response %>" data-id="<%= question.id %>">
+                      <h4><%= question.content %></h4>
+                      <% if question.response %>
+                      <div class="response"><b>Response: </b><%= question.response.content %></div>
+                      <div class="other"><b>Positivity: </b><%= (question.response.positivity * 100).round %>%, <b>Correctness: </b><%= (question.response.correctness * 100).round %>%, <b>Keywords: </b><%= question.response.keywords %>, <b>Topics: </b><%= question.response.tags %></div>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
 
               <div class="tab-pane" id="report">
                 <h3 style="text-align: center">Report</h3>
