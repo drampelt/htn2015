@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :interviews, only: [:index, :create, :new, :destroy]
   get 'interviews/:link', to: 'interviews#show', as: :interview_show
   root 'home#home'
-  post :image, to: 'image#sendimage'
+  post :image, to: 'image#send_image'
   
   devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.
