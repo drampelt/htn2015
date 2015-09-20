@@ -12,34 +12,34 @@
                   <a href="#" class="pure-button pure-button-error" id="step1-retry">Try again</a>
                 </div>
               </div>
-      
+
               <!-- Make calls to others -->
               <% unless current_user %>
               <div id="step2">
                 <button id="make-call" disabled>Start Video Call</button>
               </div>
               <% end %>
-      
+
               <!-- Call in progress -->
               <div id="step3">
                 <p>Call in Progress</p>
                 <p><button id="end-call">End Call</button></p>
               </div>
-              
+
               <video id="their-video" autoplay>Video stream not available.</video>
               <!--<button id="startbutton">Take photo</button> -->
               <video id="my-video" muted="true" autoplay>Video stream not available.</video>
-              
+
               <canvas id="canvas">
               </canvas>
               <div class="output">
-                <img id="photo"> 
+                <img id="photo">
               </div>
             </div> <!--end videos-->
           </div>
-          
+
           <hr>
-          
+
           <div>
             <h2>Info</h2>
             <h4>Interview progress:</h4>
@@ -48,16 +48,16 @@
                 <span class="sr-only">40% Complete (success)</span>
               </div>
             </div>
-            
+
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
-            
+
             <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
             <button type="button" class="btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
             <button type="button" class="btn btn-primary btn-danger">Conclude interview</button>
           </div>
         </div>
-        
+
         <div class="col-md-6">
           <!--<div>-->
             <ul class="nav nav-pills" id="myNav">
@@ -66,7 +66,7 @@
               <li><a href="#resume">Resume</a></li>
             </ul>
           <!--</div>-->
-          
+
             <div id='content' class="tab-content">
               <div class="tab-pane active" id="text-editor">
                 <h3 style="text-align: center">Text editor</h3>
@@ -75,7 +75,7 @@
                   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span id="current_language">javascript</span ><span class="caret"></span>
                   </button>
-                  
+
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li><a href="#" onClick="setAceMode('java')">java</a></li>
                     <li><a href="#" onClick="setAceMode('c')">c/c++</a></li>
@@ -86,18 +86,18 @@
                 </div>
                 <div id="firepad-container"></div>
               </div><!--end "text-editor" -->
-              
+
               <div class="tab-pane" id="report">
                 <h3 style="text-align: center">Report</h3>
                 <p>Questions answered correctly: (7/8)</p>
                 <p>Overall sentiment:</p>
                 <p>Keywords:</p>
                 <p>Notes:</p>
-                
+
               </div><!--end "info" -->
             </div><!--end "tab-content" -->
         </div><!--end "col-6" -->
-        
+
     </div><!--end "row" -->
 </div>
 
@@ -120,6 +120,7 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- Question dialog -->
 <div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -147,6 +148,8 @@
   </div>
 </div><!-- Question dialog -->
 
+=======
+>>>>>>> 393f8df8a1bb8f9cba522eaf5eef0978e5fc889c
 <script>
   function init() {
     var id = location.pathname.substr(12);
@@ -160,24 +163,28 @@
     session.setUseWrapMode(true);
     session.setUseWorker(false);
     session.setMode("ace/mode/javascript");
-    
+
     //// Create Firepad.
     var firepad = Firepad.fromACE(firepadRef, editor, {
       defaultText: '// JavaScript Editing with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
     });
-    
+
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    
+
     <% if current_user %>
     //// Interviewer
-    
+
     var peer = new Peer(id, {key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
-    
+
     peer.on('connection', function(conn) {
       // TODO: check if someone is already connected
       window.conn = conn;
       conn.on('data', function(data) {
         console.log('got ' + data);
+        if(data.response) {
+          console.log('id:' + data.response.id, 'content:' + data.response.content);
+          $.post('/responses', {question_id: data.response.id, context: data.response.content});
+        }
       });
     });
     // Receiving a call
@@ -186,38 +193,41 @@
       call.answer(window.localStream);
       step3(call);
     });
-    
+
     peer.on('error', function(err){
       alert(err.message);
       // Return to step 2 if error occurs
       step2();
     });
-    
+
     <% else %>
     //// Interviewee
-    
+
     var peer = new Peer({key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
     peer.on('open', function(){
       $('#make-call').removeAttr('disabled');
-      
+
       var conn = peer.connect(id);
       window.conn = conn;
       conn.on('data', function(data) {
         console.log("received: " + data);
         if(data.progress) { setProgressBar(data.progress); }
-        if(data.question) { setQuestion(data.question); }
+        if(data.question) {
+          if(window.question) { conn.send({response: {id: window.question.id, content: stopRecognition()}}); }
+          setQuestion(data.question);
+          startRecognition();
+        }
       });
     });
-    
+
     $('#make-call').click(function(){
       // Initiate a call!
       var call = peer.call(id, window.localStream);
       step3(call);
     });
-    
+
     <% end %>
-    
-    
+
     $('#end-call').click(function(){
       window.existingCall.close();
       step2();
@@ -227,12 +237,12 @@
       $('#step1-error').hide();
       step1();
     });
-    
+
     var width = 320;    // We will scale the photo width to this
     var height;
-    
+
     step1();
-    
+
     function step1 () {
       // Get audio/video stream
       navigator.getUserMedia({audio: true, video: true}, function(stream){
@@ -243,12 +253,12 @@
         step2();
       }, function(){ $('#step1-error').show(); });
     }
-    
+
     function step2 () {
       $('#step1, #step3').hide();
       $('#step2').show();
     }
-    
+
     function step3 (call) {
       // Hang up on an existing call if present
       if (window.existingCall) {
@@ -265,7 +275,7 @@
       $('#step1, #step2').hide();
       $('#step3').show();
     }
-    
+
     var video = $('#their-video')[0];
     var canvas = $('#canvas')[0];
     var photo = $('#photo')[0];
@@ -278,20 +288,20 @@
         streaming = true;
       }
     }, false);
-    
+
     window.setInterval(takepicture, 2000);
-    
+
     function takepicture() {
       var context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, width, height);
-    
+
       var data = canvas.toDataURL('image/png');
       photo.setAttribute('src', data);
-      
+
     }
-  
+
   }
-  
+
   function setProgressBar(value){
     if(value > 100){
       return;
@@ -300,16 +310,17 @@
   }
 
   function setAceMode(language){
-          var editor = ace.edit("firepad-container"); 
+          var editor = ace.edit("firepad-container");
           var session = editor.getSession();
           document.getElementById("current_language").innerHTML = language;
-          session.setMode("ace/mode/" + language); 
+          session.setMode("ace/mode/" + language);
       }
-  
+
   function setQuestion(question){
-    document.getElementById("current_question").innerHTML = question;
+    window.question = question;
+    document.getElementById("current_question").innerHTML = question.content;
   }
-  
+
   $("#submit_question").click(function(){
     $.post("/questions.json",
     {
@@ -322,7 +333,7 @@
       $("#new_question_answer").val("");
     });
   });
-  
+
   var final_transcript = '';
   var recognizing = false;
   var ignore_onend;
@@ -333,147 +344,37 @@
 
   $(document).ready(function(){
     init();
-    
+
     // navbar change two-column view
     $('#myNav a').click(function (e) {
       e.preventDefault()
       $(this).tab('show')
     })
 
+  var transcript = '';
 
-    // for (var i = 0; i < langs.length; i++) {
-    //   select_language.options[i] = new Option(langs[i][0], i);
-    // }
-    // select_language.selectedIndex = 6;
-    // updateCountry();
-    // select_dialect.selectedIndex = 6;
-    // showInfo('info_start');
-
-    // setup speech webkit
-    if (!('webkitSpeechRecognition' in window)) {
-      upgrade();
-    } 
-    else {
-      var recognition = new webkitSpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      recognition.onstart = function() { 
-        recognizing = true;
-        showInfo('info_speak_now');
-        start_img.src = '<%= image_path 'mic-animate' %>';  // NOTE TO CHANGE PATH
-      };
-
-      recognition.onresult = function(event) {
-        var interim_transcript = '';
-        for (var i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final_transcript += event.results[i][0].transcript;
-          } else {
-            interim_transcript += event.results[i][0].transcript;
-          }
-        }
-        final_transcript = capitalize(final_transcript);
-        final_span.innerHTML = linebreak(final_transcript);
-        interim_span.innerHTML = linebreak(interim_transcript);
-        if (final_transcript || interim_transcript) {
-          showButtons('inline-block');
-        }
-      };
-
-      recognition.onerror = function(event) {
-        if (event.error == 'no-speech') {
-          start_img.src = '<%= image_path 'mic' %>';
-          showInfo('info_no_speech');
-          ignore_onend = true;
-        }
-        if (event.error == 'audio-capture') {
-          start_img.src = '<%= image_path 'mic' %>';
-          showInfo('info_no_microphone');
-          ignore_onend = true;
-        }
-        if (event.error == 'not-allowed') {
-          if (event.timeStamp - start_timestamp < 100) {
-            showInfo('info_blocked');
-          } else {
-            showInfo('info_denied');
-          }
-          ignore_onend = true;
-        }
-      };
-
-      recognition.onend = function() {
-        recognizing = false;
-        if (ignore_onend) {
-          return;
-        }
-        start_img.src = '<%= image_path 'mic' %>';
-        if (!final_transcript) {
-          showInfo('info_start');
-          return;
-        }
-        showInfo('');
-        if (window.getSelection) {
-          window.getSelection().removeAllRanges();
-          var range = document.createRange();
-          range.selectNode(document.getElementById('final_span'));
-          window.getSelection().addRange(range);
-        }
-      };
-  }
-  
-  function upgrade() {
-    start_button.style.visibility = 'hidden';
-    showInfo('info_upgrade');
-  }
-  
-  function linebreak(s) {
-    return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
-  }
-  
-  var first_char = /\S/;
-  function capitalize(s) {
-    return s.replace(first_char, function(m) { return m.toUpperCase(); });
-  }
-  
-  function startButton(event) {
-    if (recognizing) {
-      recognition.stop();
-      return;
-    }
-    final_transcript = '';
-    recognition.lang = select_dialect.value;
-    recognition.start();
-    ignore_onend = false;
-    final_span.innerHTML = '';
-    interim_span.innerHTML = '';
-    start_img.src = '<%= image_path 'mic-slash' %>';
-    showInfo('info_allow');
-    showButtons('none');
-    start_timestamp = event.timeStamp;
-  }
-  
-  function showInfo(s) {
-    var info = $('#info')[0];
-    if (s) {
-      for (var child = info.firstChild; child; child = child.nextSibling) {
-  
-        if (child.style) {
-          child.style.display = child.id == s ? 'inline' : 'none';
-        }
+  function startRecognition() {
+    console.log('starting recognition');
+    transcript = '';
+    var recognition = new webkitSpeechRecognition();
+    window.recognition = recognition;
+    recognition.continuous = true;
+    recognition.onresult = function(event) {
+      for(var i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
       }
-      info.style.visibility = 'visible';
-    } else {
-      info.style.visibility = 'hidden';
+      console.log('result: ' + transcript);
     }
-  }
-  
-  function showButtons(style) {
-    if (style == current_style) {
-      return;
+    recognition.onend = function() {
+      console.log('done recognition: ' + transcript);
     }
-    current_style = style;
+    recognition.start();
   }
-}); //end
+
+  function stopRecognition() {
+    console.log('ending recognition');
+    recognition.stop();
+    return transcript;
+  }
 
 </script>
