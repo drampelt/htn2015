@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :notes
   resources :responses
   resources :questions
   resources :interviews, only: [:index, :create, :new, :destroy]
