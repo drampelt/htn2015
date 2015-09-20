@@ -168,3 +168,21 @@ padding: 0;
   font-family: "Lucida Grande", "Arial", sans-serif;
   color: rgba(255, 255, 255, 1.0);
 }
+
+.field {
+    width: 50%;
+    margin: auto;
+}
+
+#email-field {
+    padding-bottom: 40px;
+}
+
+.actions {
+    width: 40%;
+    margin-left: 60%;
+}
+
+body > a {
+    margin-left: 25%;
+}
