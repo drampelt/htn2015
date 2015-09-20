@@ -41,13 +41,21 @@
                 <span class="sr-only">40% Complete (success)</span>
               </div>
             </div>
-            
+            <% unless current_user %>
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
-            
+            <% else %>
             <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
             <button type="button" class="btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
             <button type="button" class="btn btn-primary btn-danger">Conclude interview</button>
+            
+            <h2>All Questions <small>click to ask</small></h2>
+            <ul id="questions">
+              <% @interview.questions.each do |question| %>
+                <li class="question" data-id="<%= question.id %>"><%= question.content %></li>
+              <% end %>
+            </ul>
+            <% end %>
           </div>
         </div>
         
@@ -142,6 +150,7 @@
 
 
 <script>
+  var questions = <%= raw @interview.questions.to_json %>;
   function init() {
     var id = location.pathname.substr(12);
     //// Initialize Firebase.
@@ -175,6 +184,10 @@
         if(data.response) {
           console.log('id:' + data.response.id, 'content:' + data.response.content);
           $.post('/responses', {question_id: data.response.id, context: data.response.content});
+          var question = _.findWhere(questions, {id: data.response.id});
+          question.response = data.response.content;
+          var index = questions.indexOf(question);
+          $('.question').eq(index).html(question.content + ' - ' + question.response);
         }
       });
     });
@@ -202,6 +215,7 @@
       window.conn = conn;
       conn.on('data', function(data) {
         console.log("received: " + data);
+        window.data = data;
         if(data.progress) { setProgressBar(data.progress); }
         if(data.question) {
           if(window.question) { conn.send({response: {id: window.question.id, content: stopRecognition()}}); }
@@ -281,14 +295,27 @@
     document.getElementById("current_question").innerHTML = question.content;
   }
   
+  $('.question').click(function(e) {
+    selectQuestion($(e.currentTarget).index());
+  });
+  
+  function selectQuestion(index) {
+    $('.question').removeClass('selected');
+    $('.question').eq(index).addClass('selected');
+    conn.send({question: questions[index]});
+  }
+  
   $("#submit_question").click(function(){
     $.post("/questions.json",
     {
       content:$("#new_question_text").val(),
-      answer:$("#new_question_answer").val()
+      answer:$("#new_question_answer").val(),
+      link: location.pathname.substr(12)
     },
-    function(){
-      $("#current_question").html($("#new_question_text").val());
+    function(question){
+      questions.push(question);
+      $('#questions').append($('<li/>').addClass('question').attr('data-id', question.id).html(question.content));
+      $("#current_question").html(question.content);
       $("#new_question_text").val("");
       $("#new_question_answer").val("");
     });

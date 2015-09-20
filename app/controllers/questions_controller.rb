@@ -29,7 +29,6 @@ class QuestionsController < ApplicationController
     @interview = Interview.find_by_link params[:link]
     @question.interview = @interview
 
-
     respond_to do |format|
       if @question.save
         format.html { redirect_to @question, notice: 'Question was successfully created.' }
