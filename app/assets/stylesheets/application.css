@@ -105,7 +105,7 @@ label {
 }
 .final {
   color: black;
-  padding-right: 3px; 
+  padding-right: 3px;
 }
 .interim {
   color: gray;
@@ -139,7 +139,7 @@ min-height: 150px;
 border: 0;
 background-color:transparent;
 padding: 0;
-} 
+}
 
 #videos-container {
     position: relative;
@@ -177,6 +177,7 @@ padding: 0;
   text-align:center;
   display:block;
   margin:auto;
+}
 
 ul#questions {
     list-style: none;
