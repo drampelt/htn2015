@@ -26,8 +26,15 @@
                 <p><button id="end-call">End Call</button></p>
               </div>
               
-              <video id="their-video" autoplay></video>
-              <video id="my-video" muted="true" autoplay></video>
+              <video id="their-video" autoplay>Video stream not available.</video>
+              <!--<button id="startbutton">Take photo</button> -->
+              <video id="my-video" muted="true" autoplay>Video stream not available.</video>
+              
+              <canvas id="canvas">
+              </canvas>
+              <div class="output">
+                <img id="photo"> 
+              </div>
             </div> <!--end videos-->
           </div>
           
@@ -94,118 +101,51 @@
     </div><!--end "row" -->
 </div>
 
-                <!-- New note dialog -->
-                <div class="modal fade" id="note_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">New note</h4>
-                      </div>
-                      <div class="modal-body">
-                        <input id="new_note_text" type="text" class="form-control" placeholder="Type note here.">
-                      </div>
-                      <div class="modal-footer">
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                        <button id="submit_note" type="button" class="btn btn-primary" data-dismiss="modal">Save note</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Question dialog -->
-                <div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <input id="new_question_text" type="text" class="form-control" placeholder="Type question here.">
-                      </div>
-                      <div class="modal-body">
-                        <input id="new_question_answer" type="text" class="form-control" placeholder="Type expected answer here.">
-                        <hr>
-                        Select from pre-made questions:
-                        <div class="radio">
-                          <label><input type="radio" name="optradio">Option 1</label>
-                        </div>
-                        <div class="radio">
-                          <label><input type="radio" name="optradio">Option 2</label>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                        <button id="submit_question" type="button" class="btn btn-primary" data-dismiss="modal">Submit question</button>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- Question dialog -->
+<!-- New note dialog -->
+<div class="modal fade" id="note_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">New note</h4>
+      </div>
+      <div class="modal-body">
+        <input id="new_note_text" type="text" class="form-control" placeholder="Type note here.">
+      </div>
+      <div class="modal-footer">
+        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+        <button id="submit_note" type="button" class="btn btn-primary" data-dismiss="modal">Save note</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-
-<script>
-var langs =
-[['Afrikaans',       ['af-ZA']],
- ['Bahasa Indonesia',['id-ID']],
- ['Bahasa Melayu',   ['ms-MY']],
- ['Català',          ['ca-ES']],
- ['Čeština',         ['cs-CZ']],
- ['Deutsch',         ['de-DE']],
- ['English',         ['en-AU', 'Australia'],
-                     ['en-CA', 'Canada'],
-                     ['en-IN', 'India'],
-                     ['en-NZ', 'New Zealand'],
-                     ['en-ZA', 'South Africa'],
-                     ['en-GB', 'United Kingdom'],
-                     ['en-US', 'United States']],
- ['Español',         ['es-AR', 'Argentina'],
-                     ['es-BO', 'Bolivia'],
-                     ['es-CL', 'Chile'],
-                     ['es-CO', 'Colombia'],
-                     ['es-CR', 'Costa Rica'],
-                     ['es-EC', 'Ecuador'],
-                     ['es-SV', 'El Salvador'],
-                     ['es-ES', 'España'],
-                     ['es-US', 'Estados Unidos'],
-                     ['es-GT', 'Guatemala'],
-                     ['es-HN', 'Honduras'],
-                     ['es-MX', 'México'],
-                     ['es-NI', 'Nicaragua'],
-                     ['es-PA', 'Panamá'],
-                     ['es-PY', 'Paraguay'],
-                     ['es-PE', 'Perú'],
-                     ['es-PR', 'Puerto Rico'],
-                     ['es-DO', 'República Dominicana'],
-                     ['es-UY', 'Uruguay'],
-                     ['es-VE', 'Venezuela']],
- ['Euskara',         ['eu-ES']],
- ['Français',        ['fr-FR']],
- ['Galego',          ['gl-ES']],
- ['Hrvatski',        ['hr_HR']],
- ['IsiZulu',         ['zu-ZA']],
- ['Íslenska',        ['is-IS']],
- ['Italiano',        ['it-IT', 'Italia'],
-                     ['it-CH', 'Svizzera']],
- ['Magyar',          ['hu-HU']],
- ['Nederlands',      ['nl-NL']],
- ['Norsk bokmål',    ['nb-NO']],
- ['Polski',          ['pl-PL']],
- ['Português',       ['pt-BR', 'Brasil'],
-                     ['pt-PT', 'Portugal']],
- ['Română',          ['ro-RO']],
- ['Slovenčina',      ['sk-SK']],
- ['Suomi',           ['fi-FI']],
- ['Svenska',         ['sv-SE']],
- ['Türkçe',          ['tr-TR']],
- ['български',       ['bg-BG']],
- ['Pусский',         ['ru-RU']],
- ['Српски',          ['sr-RS']],
- ['한국어',            ['ko-KR']],
- ['中文',             ['cmn-Hans-CN', '普通话 (中国大陆)'],
-                     ['cmn-Hans-HK', '普通话 (香港)'],
-                     ['cmn-Hant-TW', '中文 (台灣)'],
-                     ['yue-Hant-HK', '粵語 (香港)']],
- ['日本語',           ['ja-JP']],
- ['Lingua latīna',   ['la']]];
-</script>
+<!-- Question dialog -->
+<div class="modal fade" id="question_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <input id="new_question_text" type="text" class="form-control" placeholder="Type question here.">
+      </div>
+      <div class="modal-body">
+        <input id="new_question_answer" type="text" class="form-control" placeholder="Type expected answer here.">
+        <hr>
+        Select from pre-made questions:
+        <div class="radio">
+          <label><input type="radio" name="optradio">Option 1</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="optradio">Option 2</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+        <button id="submit_question" type="button" class="btn btn-primary" data-dismiss="modal">Submit question</button>
+      </div>
+    </div>
+  </div>
+</div><!-- Question dialog -->
 
 <script>
   function init() {
@@ -277,6 +217,7 @@ var langs =
     
     <% end %>
     
+    
     $('#end-call').click(function(){
       window.existingCall.close();
       step2();
@@ -287,6 +228,9 @@ var langs =
       step1();
     });
     
+    var width = 320;    // We will scale the photo width to this
+    var height;
+    
     step1();
     
     function step1 () {
@@ -294,14 +238,17 @@ var langs =
       navigator.getUserMedia({audio: true, video: true}, function(stream){
         // Set your video displays
         $('#my-video').prop('src', URL.createObjectURL(stream));
+        // height = $('#my-video').videoHeight / ($('#my-video').videoWidth/width);
         window.localStream = stream;
         step2();
       }, function(){ $('#step1-error').show(); });
     }
+    
     function step2 () {
       $('#step1, #step3').hide();
       $('#step2').show();
     }
+    
     function step3 (call) {
       // Hang up on an existing call if present
       if (window.existingCall) {
@@ -318,6 +265,31 @@ var langs =
       $('#step1, #step2').hide();
       $('#step3').show();
     }
+    
+    var video = $('#their-video')[0];
+    var canvas = $('#canvas')[0];
+    var photo = $('#photo')[0];
+    var streaming;
+    video.addEventListener('canplay', function(ev){
+      if (!streaming) {
+        height = video.videoHeight / (video.videoWidth/width);
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        streaming = true;
+      }
+    }, false);
+    
+    window.setInterval(takepicture, 2000);
+    
+    function takepicture() {
+      var context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, width, height);
+    
+      var data = canvas.toDataURL('image/png');
+      photo.setAttribute('src', data);
+      
+    }
+  
   }
   
   function setProgressBar(value){
@@ -369,13 +341,13 @@ var langs =
     })
 
 
-    for (var i = 0; i < langs.length; i++) {
-      select_language.options[i] = new Option(langs[i][0], i);
-    }
-    select_language.selectedIndex = 6;
-    updateCountry();
-    select_dialect.selectedIndex = 6;
-    showInfo('info_start');
+    // for (var i = 0; i < langs.length; i++) {
+    //   select_language.options[i] = new Option(langs[i][0], i);
+    // }
+    // select_language.selectedIndex = 6;
+    // updateCountry();
+    // select_dialect.selectedIndex = 6;
+    // showInfo('info_start');
 
     // setup speech webkit
     if (!('webkitSpeechRecognition' in window)) {
@@ -448,17 +420,6 @@ var langs =
           window.getSelection().addRange(range);
         }
       };
-  }
-
-  function updateCountry() {
-    for (var i = select_dialect.options.length - 1; i >= 0; i--) {
-      select_dialect.remove(i);
-    }
-    var list = langs[select_language.selectedIndex];
-    for (var i = 1; i < list.length; i++) {
-      select_dialect.options.add(new Option(list[i][1], list[i][0]));
-    }
-    select_dialect.style.visibility = list[1].length == 1 ? 'hidden' : 'visible';
   }
   
   function upgrade() {
