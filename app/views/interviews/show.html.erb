@@ -115,6 +115,37 @@
                 <p>Questions answered correctly: (7/8)</p>
                 <p>Overall sentiment:</p>
                 <p>Keywords:</p>
+                <p>Emotions:</p>
+                <div class="progress">
+                  <div id="progress-Happy" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Happy
+                  </div>
+                </div>
+                <div class="progress">
+                  <div id="progress-Surprise" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Surprise
+                  </div>
+                </div>
+                <div class="progress">
+                  <div id="progress-Neutral" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Neutral
+                  </div>
+                </div>
+                <div class="progress">
+                  <div id="progress-Sad" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Sad
+                  </div>
+                </div>
+                <div class="progress">
+                  <div id="progress-Fear" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Fear
+                  </div>
+                </div>
+                <div class="progress">
+                  <div id="progress-Angry" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Angry
+                  </div>
+                </div>
                 <p>Notes:</p>
                 <ul id="report_notes">
                   
@@ -297,6 +328,9 @@
       call.on('stream', function(stream){
         $('#their-video').prop('src', URL.createObjectURL(stream));
       });
+      call.on('close', function() {
+        if(window.picturetask) { clearInterval(window.picturetask); }
+      });
       // UI stuff
       window.existingCall = call;
       $('#their-id').text(call.peer);
@@ -305,29 +339,56 @@
       $('#step3').show();
     }
 
+    <% if current_user %>
+    
     var video = $('#their-video')[0];
     var canvas = $('#canvas')[0];
     var photo = $('#photo')[0];
     var streaming;
-    video.addEventListener('canplay', function(ev){
+    $(video).on('canplay', function(ev){
       if (!streaming) {
         height = video.videoHeight / (video.videoWidth/width);
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
         streaming = true;
+        window.picturetask = setInterval(takepicture, 2000);
       }
-    }, false);
-
-    window.setInterval(takepicture, 2000);
+    });
 
     function takepicture() {
       var context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, width, height);
+      $(canvas).faceDetection({complete: function(faces) {
+        var data;
+        var detect = false;
+        if(faces.length > 0) {
+          face = faces[0];
+          console.log(face);
+          var tmpCanvas = document.createElement('canvas'),
+              tmpContext = tmpCanvas.getContext('2d');
+              
+          tmpCanvas.width = Math.round(face.width);
+          tmpCanvas.height = Math.round(face.height);
+          tmpContext.drawImage(canvas, -face.x, -face.y);
+          data = tmpCanvas.toDataURL('image/png');
+          photo.setAttribute('src', data);
+        } else {
+          data = canvas.toDataURL('image/png');
+          detect = true;
+        }
+        photo.setAttribute('src', data);
+        $.post('/image.json', {image: data.substr(22), detect: detect}).done(function(stats){
+          if(detect) { stats = stats[0].emotions; }
+          console.log(window.stats = stats);
+          for(key in stats) {
+            $('#progress-' + key).css('width', (stats[key] * 100) + '%');
+          }
+        });
+      }});
 
-      var data = canvas.toDataURL('image/png');
-      photo.setAttribute('src', data);
-
-    }
+    };
+    
+    <% end %>
 
   }
 
