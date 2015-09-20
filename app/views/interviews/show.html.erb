@@ -368,7 +368,6 @@
           tmpCanvas.height = Math.round(face.height);
           tmpContext.drawImage(canvas, -face.x, -face.y);
           data = tmpCanvas.toDataURL('image/png');
-          photo.setAttribute('src', data);
         } else {
           data = canvas.toDataURL('image/png');
           detect = true;
