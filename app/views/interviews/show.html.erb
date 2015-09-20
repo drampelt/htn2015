@@ -60,9 +60,6 @@
               </div>
             </div>
 
-            <h4>Current question: </h4>
-            <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
-
             <% unless current_user %>
             <h4>Current question: </h4>
             <h4 id="current_question">Implement a Linked-List in the language of your choice.</h4>
@@ -371,12 +368,11 @@
           tmpCanvas.height = Math.round(face.height);
           tmpContext.drawImage(canvas, -face.x, -face.y);
           data = tmpCanvas.toDataURL('image/png');
-          photo.setAttribute('src', data);
         } else {
           data = canvas.toDataURL('image/png');
           detect = true;
         }
-        photo.setAttribute('src', data);
+        // photo.setAttribute('src', data);
         $.post('/image.json', {image: data.substr(22), detect: detect}).done(function(stats){
           if(detect) { stats = stats[0].emotions; }
           console.log(window.stats = stats);

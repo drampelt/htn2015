@@ -1641,9 +1641,6 @@
 	#banner-wrapper {
 		position: relative;
 		background-color: #0665b6;
-		background-position: top left, top left, center center;
-		background-repeat: repeat, repeat, no-repeat;
-		background-size: auto, auto, cover;
 		z-index: 1;
 	}
 
@@ -1658,10 +1655,6 @@
 	#banner {
 		position: relative;
 		background-color: rgba(21, 28, 23, 0.85);
-		background-image: url("images/overlay.png"), url("images/highlight.png");
-		background-position: top left, center center;
-		background-size: auto, 100% 250%;
-		background-repeat: repeat, no-repeat;
 		text-align: center;
 		margin: 0;
 	}
@@ -2657,9 +2650,17 @@
 		font-weight: 100;
 	}
 
-  #banner-wrapper{
+#banner-wrapper{
     background-image: image-url("siliconvalleybg.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 50%;
+}
+
+#firepad-container {
+  width: 100%;
+  height: 700px;
+}
+#current_question{
+    color: #67655D;
 }
