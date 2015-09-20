@@ -347,15 +347,34 @@
     function takepicture() {
       var context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, width, height);
-
-      var data = canvas.toDataURL('image/png');
-      photo.setAttribute('src', data);
-      $.post('/image.json', {image: data.substr(22)}).done(function(stats){
-        console.log(window.stats = stats);
-        for(key in stats) {
-          $('#progress-' + key).css('width', (stats[key] * 100) + '%');
+      $(canvas).faceDetection({complete: function(faces) {
+        var data;
+        var detect = false;
+        if(faces.length > 0) {
+          face = faces[0];
+          console.log(face);
+          var tmpCanvas = document.createElement('canvas'),
+              tmpContext = tmpCanvas.getContext('2d');
+              
+          tmpCanvas.width = Math.round(face.width);
+          tmpCanvas.height = Math.round(face.height);
+          tmpContext.drawImage(canvas, -face.x, -face.y);
+          data = tmpCanvas.toDataURL('image/png');
+          photo.setAttribute('src', data);
+        } else {
+          data = canvas.toDataURL('image/png');
+          detect = true;
         }
-      });
+        photo.setAttribute('src', data);
+        $.post('/image.json', {image: data.substr(22), detect: detect}).done(function(stats){
+          if(detect) { stats = stats[0].emotions; }
+          console.log(window.stats = stats);
+          for(key in stats) {
+            $('#progress-' + key).css('width', (stats[key] * 100) + '%');
+          }
+        });
+      }});
+
     };
     
     <% end %>
