@@ -13,6 +13,9 @@
  *= require_tree .
  *= require_self
  */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100italic);
+
 body{
   /*padding-top: 50px;*/
   position: relative;
@@ -168,3 +171,11 @@ padding: 0;
   font-family: "Lucida Grande", "Arial", sans-serif;
   color: rgba(255, 255, 255, 1.0);
 }
+
+.header_logo_home {
+  height: 60px;
+  text-align:center;
+  display:block;
+  margin:auto;
+}
+
