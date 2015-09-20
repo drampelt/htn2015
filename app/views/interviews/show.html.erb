@@ -66,7 +66,7 @@
             <% else %>
             <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#question_modal">Add question</button>
             <button type="button" class="btn btn-primary btn-warning" data-toggle="modal" data-target="#note_modal">Add note</button>
-            <button type="button" class="btn btn-primary btn-danger">Conclude interview</button>
+            <button type="button" class="btn btn-primary btn-danger" id="conclude">Conclude interview</button>
             <% end %>
           </div>
         </div>
@@ -76,7 +76,7 @@
             <ul class="nav nav-pills" id="myNav">
               <li class="active"><a href="#text-editor">Text Editor</a></li>
               <% if current_user %>
-              <li><a href="#questions">Questions</a></li>
+              <li><a href="#question-pane">Questions</a></li>
               <li><a href="#report">Report</a></li>
               <% end %>
               <li><a href="#resume">Resume</a></li>
@@ -103,7 +103,7 @@
                 <div id="firepad-container"></div>
               </div><!--end "text-editor" -->
               
-              <div class="tab-pane" id="questions">
+              <div class="tab-pane" id="question-pane">
                 <h3>All Questions <small>click to ask</small></h3>
                 <ul id="questions">
                   <% @interview.questions.each do |question| %>
@@ -242,15 +242,31 @@
     peer.on('connection', function(conn) {
       // TODO: check if someone is already connected
       window.conn = conn;
+      
+      setTimeout(calculateProgress, 100);
+      
       conn.on('data', function(data) {
         console.log('got ' + data);
         if(data.response) {
           console.log('id:' + data.response.id, 'content:' + data.response.content);
-          $.post('/responses', {question_id: data.response.id, content: data.response.content});
-          var question = _.findWhere(questions, {id: data.response.id});
-          question.response = data.response.content;
-          var index = questions.indexOf(question);
-          $('.question').eq(index).html(question.content + ' - ' + question.response);
+          $.post('/responses.json', {question_id: data.response.id, content: data.response.content}).done(function(response) {
+            console.log('got response', window.response = response);
+            var question = _.findWhere(questions, {id: data.response.id});
+            question.response = response;
+            var index = questions.indexOf(question);
+            el = $('.question').eq(index);
+            el.find('h4').html(question.content);
+            el.append($('<div/>').append($('<b/>').html('Response: ')).append(response.content));
+            el.append($('<div/>')
+              .append($('<b/>').html('Positivity: ')).append(Math.round(response.positivity * 100) + '%, ')
+              .append($('<b/>').html('Correctness: ')).append(Math.round(response.correctness * 100) + '%, ')
+              .append($('<b/>').html('Keywords: ')).append(response.keywords + ', ')
+              .append($('<b/>').html('Topics: ')).append(response.tags));
+            el.removeClass('selected').addClass('completed');
+            var percent = ($('.question.completed').length / $('.question').length) * 100;
+            setProgressBar(percent);
+            conn.send({progress: percent});
+          });
         }
       });
     });
@@ -418,30 +434,40 @@
     document.getElementById("current_question").innerHTML = question.content;
   }
   
-  $('.question').click(function(e) {
-    selectQuestion($(e.currentTarget).index());
-  });
+  $('.question').on('click', selectQuestion);
   
-  function selectQuestion(index) {
+  function selectQuestion(e) {
+    index = $(e.currentTarget).index();
+    console.log('select ' + index);
     if($('.question').eq(index).hasClass('completed', 'selected')) { return }
     $('.question').removeClass('selected');
     $('.question').eq(index).addClass('selected');
     conn.send({question: questions[index]});
   }
   
+  $('#conclude').click(function() {
+    conn.send({question: {content: 'No more questions'}});
+  });
+  
+  function calculateProgress() {
+    var percent = ($('.question.completed').length / $('.question').length) * 100;
+    setProgressBar(percent);
+    conn.send({progress: percent});
+  }
+  
   $("#submit_question").click(function(){
-    $.post("/questions.json",
-    {
+    $.post("/questions.json", {
       content:$("#new_question_text").val(),
       answer:$("#new_question_answer").val(),
       link: location.pathname.substr(12)
-    },
-    function(question){
+    }).done(function(question) {
       questions.push(question);
-      $('#questions').append($('<li/>').addClass('question').attr('data-id', question.id).html(question.content));
-      $("#current_question").html(question.content);
+      $('#questions').append($('<li/>').append($('<h4/>').html(question.content)).addClass('question'));
       $("#new_question_text").val("");
       $("#new_question_answer").val("");
+      calculateProgress();
+      $('.question').off('click');
+      $('.question').on('click', selectQuestion);
     });
   });
   
