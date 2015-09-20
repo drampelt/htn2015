@@ -85,13 +85,14 @@
 
             <div id='content' class="tab-content">
               <div class="tab-pane active" id="text-editor">
-                <h3 style="text-align: center">Text editor</h3>
+                <!--<h3 style="text-align: center">Text editor</h3>-->
                 <!-- Single button -->
-                <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span id="current_language">javascript</span ><span class="caret"></span>
-                  </button>
-
+              
+                <div class="dropdown" id="current_language_dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span id="current_language">javascript</span > <span class="caret"></span>
+                </button>
+  
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li><a href="#" onClick="setAceMode('java')">java</a></li>
                     <li><a href="#" onClick="setAceMode('c')">c/c++</a></li>
@@ -99,8 +100,9 @@
                     <li><a href="#" onClick="setAceMode('ruby')">ruby</a></li>
                     <li><a href="#" onClick="setAceMode('javascript')">javascript</a></li>
                   </ul>
-                </div>
-                <div id="firepad-container"></div>
+              </div>
+
+              <div id="firepad-container"></div>
               </div><!--end "text-editor" -->
               
               <div class="tab-pane" id="question-pane">
@@ -119,7 +121,7 @@
               </div>
 
               <div class="tab-pane" id="report">
-                <h3 style="text-align: center">Report</h3>
+                <!--<h3 style="text-align: center">Report</h3>-->
                 <p>Questions answered correctly: (7/8)</p>
                 <p>Overall sentiment:</p>
                 <p>Keywords:</p>
@@ -156,7 +158,6 @@
                 </div>
                 <p>Notes:</p>
                 <ul id="report_notes">
-                  
                 </ul>
 
               </div><!--end "info" -->
