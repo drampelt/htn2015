@@ -25,6 +25,8 @@ class NotesController < ApplicationController
   # POST /notes.json
   def create
     @note = Note.new(note_params)
+    @interview = Interview.find_by_link params[:link]
+    @note.interview = @interview
 
     respond_to do |format|
       if @note.save
@@ -69,6 +71,6 @@ class NotesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def note_params
-      params.require(:note).permit(:content, :interview_id)
+      params.permit(:content)
     end
 end

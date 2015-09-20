@@ -121,18 +121,14 @@
               </div>
 
               <div class="tab-pane" id="report">
-                <!--<h3 style="text-align: center">Report</h3>-->
-                <p>Questions answered correctly: (7/8)</p>
-                <p>Overall sentiment:</p>
-                <p>Keywords:</p>
-                <p>Emotions:</p>
+                <p>Emotions</p>
                 <div class="progress">
-                  <div id="progress-Happy" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
-                    Happy
+                  <div id="progress-Happy" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Happiness
                   </div>
                 </div>
                 <div class="progress">
-                  <div id="progress-Surprise" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                  <div id="progress-Surprise" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
                     Surprise
                   </div>
                 </div>
@@ -142,22 +138,25 @@
                   </div>
                 </div>
                 <div class="progress">
-                  <div id="progress-Sad" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
-                    Sad
+                  <div id="progress-Sad" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Sadness
                   </div>
                 </div>
                 <div class="progress">
-                  <div id="progress-Fear" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                  <div id="progress-Fear" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
                     Fear
                   </div>
                 </div>
                 <div class="progress">
-                  <div id="progress-Angry" class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
-                    Angry
+                  <div id="progress-Angry" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
+                    Anger
                   </div>
                 </div>
                 <p>Notes:</p>
                 <ul id="report_notes">
+                  <% @interview.notes.each do |note| %>
+                    <li><%= note.content %></li>
+                  <% end %>
                 </ul>
 
               </div><!--end "info" -->
@@ -237,6 +236,7 @@
 
     <% if current_user %>
     //// Interviewer
+    calculateProgress();
 
     var peer = new Peer(id, {key: 'be4ed344-8803-4f32-adcd-310ed09a3a5b'});
 
@@ -453,7 +453,7 @@
   function calculateProgress() {
     var percent = ($('.question.completed').length / $('.question').length) * 100;
     setProgressBar(percent);
-    conn.send({progress: percent});
+    if(typeof conn !== "undefined") { conn.send({progress: percent}); }
   }
   
   $("#submit_question").click(function(){
@@ -473,8 +473,13 @@
   });
   
   $("#submit_note").click(function(){
-    $("#report_notes").append("<li>" + $("#new_note_text").val() + "</li>");
-    $("#new_note_text").val("");
+    $.post("/notes.json", {
+      content: $("#new_note_text").val(),
+      link: location.pathname.substr(12)
+    }).done(function(note) {
+      $("#report_notes").append("<li>" + note.content + "</li>");
+      $("#new_note_text").val("");
+    });
   });
 
   var final_transcript = '';
