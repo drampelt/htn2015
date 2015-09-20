@@ -71,7 +71,13 @@
             <h2>All Questions <small>click to ask</small></h2>
             <ul id="questions">
               <% @interview.questions.each do |question| %>
-                <li class="question" data-id="<%= question.id %>"><%= question.content %></li>
+                <li class="question<%= ' completed' if question.response %>" data-id="<%= question.id %>">
+                  <h4><%= question.content %></h4>
+                  <% if question.response %>
+                  <div class="response"><b>Response: </b><%= question.response.content %></div>
+                  <div class="other"><b>Positivity: </b><%= (question.response.positivity * 100).round %>%, <b>Correctness: </b><%= (question.response.correctness * 100).round %>%, <b>Keywords: </b><%= question.response.keywords %>, <b>Topics: </b><%= question.response.tags %></div>
+                  <% end %>
+                </li>
               <% end %>
             </ul>
             <% end %>
@@ -235,7 +241,7 @@
         console.log('got ' + data);
         if(data.response) {
           console.log('id:' + data.response.id, 'content:' + data.response.content);
-          $.post('/responses', {question_id: data.response.id, context: data.response.content});
+          $.post('/responses', {question_id: data.response.id, content: data.response.content});
           var question = _.findWhere(questions, {id: data.response.id});
           question.response = data.response.content;
           var index = questions.indexOf(question);
@@ -474,12 +480,14 @@
     }
     recognition.start();
   }
+  window.startRecognition = startRecognition;
 
   function stopRecognition() {
     console.log('ending recognition');
     recognition.stop();
     return transcript;
   }
+  window.stopRecognition = stopRecognition;
 });
 
 </script>
